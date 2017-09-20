@@ -1,3 +1,9 @@
+<% if (typeof(errors) !== "undefined"){ %>
+  <% for (let error in errors){ %>
+    <li><%= errors[error].message %></li>
+  <% } %>
+<% } %>
+
 <form action="/products" method="POST">
   <label for="name">Name</label>
   <input type="text" id="name" name="name">

@@ -7,5 +7,16 @@
   <body>
     <h1><%= title %></h1>
     <p>Welcome to <%= title %></p>
+
+<form action="/products/search">
+    <label for="search-term">Search for an item by name</label>
+    <input type="text" name="searchTerm" id="search-term">
+
+    <button type="submit">Search</button>
+  </form>
+
+  <a href="/products/expensive">Most Expensive Items</a>
+  <a href="/products/cheapest">Cheapest Items</a>
+
   </body>
 </html>
