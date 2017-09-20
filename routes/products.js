@@ -1,6 +1,5 @@
 const express = require('express');
 const Product = require('../models/product');
-
 const router  = express.Router();
 
 router.get('/', (req, res, next) => {
@@ -15,13 +14,6 @@ Product.find({}, (err, products) => {
 
 router.get('/new', (req, res, next) => {
   res.render('products/new');
-  const newProduct = new Product(productInfo);
-
-  newProduct.save( (err) => {
-    if (err) { return next(err) }
-    // redirect to the list of products if it saves
-    return res.redirect('/products');
-  });
 });
 
 router.post('/', (req, res, next) => {
@@ -31,6 +23,49 @@ router.post('/', (req, res, next) => {
       imageUrl: req.body.imageUrl,
       description: req.body.description
   };
+  const newProduct = new Product(productInfo);
+
+  newProduct.save( (err) => {
+    if (err) {
+      return res.render('products/new', { errors: newProduct.errors });
+     }
+    // redirect to the list of products if it saves
+    return res.redirect('/products');
+  });
+
+});
+
+
+router.get('/search', (req, res) => {
+  let query = req.query.searchTerm;
+
+  let queryRegex = new RegExp(query);
+  // We use a Regex here to find items that are similar to the search
+  // For instance if I searched "Yoga", I would then find the Yoga Mat
+  Product.find({ name: queryRegex }, (err, products) => {
+    if (err) { next(err) }
+    res.render('products/results', {products});
+  });
+})
+
+router.get('/cheapest', (req, res, next) => {
+  Product
+    .find({})
+    .sort({ price: "ascending" })
+    .exec((err, products) => {
+      if (err) { next(err) }
+      res.render('products/results',  {products})
+    });
+});
+
+router.get('/expensive', (req, res, next) => {
+  Product
+    .find({})
+    .sort({ price: "descending" })
+    .exec((err, products) => {
+      if (err) { next(err) }
+      res.render('products/results',  {products})
+    });
 });
 
 router.get('/:id', (req, res, next) => {
